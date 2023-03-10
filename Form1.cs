@@ -1,13 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace ShadowColorAdjuster
@@ -18,13 +12,19 @@ namespace ShadowColorAdjuster
         
         private Image baseImage1;
         private Image baseImage2;
+        private Image baseImage3;
+        private Image baseImage4;
         
         private Image colorMask1;
         private Image colorMask2;
         private Image colorMask3;
+        private Image colorMask4;
+        private Image colorMask5;
 
         private const string Image1Name = "tex1_128x128_95091b97a182cc89_16cffb4f349bb9eb_8.png";
         private const string Image2Name = "tex1_128x128_23470849ed473c96_9bcd3e8f93232964_8.png";
+        private const string Image3Name = "tex1_128x128_0a670a23d69f0145_d1f065a85855fcc6_8.png";
+        private const string Image4Name = "tex1_64x64_ad55d92089adb44b_a7fa923a179a8dd1_8.png";
         
         public Form1()
         {
@@ -37,12 +37,18 @@ namespace ShadowColorAdjuster
         {
             baseImage1 = Image.FromFile(AppDomain.CurrentDomain.BaseDirectory + @"ReferenceImages\ShadowColorBase1.png");
             baseImage2 = Image.FromFile(AppDomain.CurrentDomain.BaseDirectory + @"ReferenceImages\ShadowColorBase2.png");
+            baseImage3 = Image.FromFile(AppDomain.CurrentDomain.BaseDirectory + @"ReferenceImages\ShadowColorBase3.png");
+            baseImage4 = Image.FromFile(AppDomain.CurrentDomain.BaseDirectory + @"ReferenceImages\ShadowColorBase4.png");
             colorMask1 = Image.FromFile(AppDomain.CurrentDomain.BaseDirectory + @"ReferenceImages\ShadowColorMask1.png");
             colorMask2 = Image.FromFile(AppDomain.CurrentDomain.BaseDirectory + @"ReferenceImages\ShadowColorMask2.png");
             colorMask3 = Image.FromFile(AppDomain.CurrentDomain.BaseDirectory + @"ReferenceImages\ShadowColorMask3.png");
+            colorMask4 = Image.FromFile(AppDomain.CurrentDomain.BaseDirectory + @"ReferenceImages\ShadowColorMask4.png");
+            colorMask5 = Image.FromFile(AppDomain.CurrentDomain.BaseDirectory + @"ReferenceImages\ShadowColorMask5.png");
             
             PreviewPicture.Image = new Bitmap(baseImage1);
             PreviewPicture2.Image = new Bitmap(baseImage2);
+            PreviewPicture3.Image = new Bitmap(baseImage3);
+            PreviewPicture4.Image = new Bitmap(baseImage4);
         }
 
         private void InitColorControls()
@@ -188,77 +194,62 @@ namespace ShadowColorAdjuster
 
         private void ApplyColorToPreviews()
         {
-            if (PreviewPicture.Image != null)
-            {
-                if (colorMask1 != null)
-                {
-                    var baseImageBitmap = (Bitmap)baseImage1;
-                    var colorMaskBitmap = (Bitmap)colorMask1;
+            ApplyColorWithMask(true, PreviewPicture, baseImage1, colorMask1, AccentColorPreview.BackColor);
+            ApplyColorWithMask(false, PreviewPicture, baseImage1, colorMask3, MainColorPreview.BackColor);
 
-                    for (int x = 0; x < colorMask1.Width; x++)
-                    {
-                        for (int y = 0; y < colorMask1.Height; y++)
-                        {
-                            var maskPixelColor = colorMaskBitmap.GetPixel(x, y);
-                            if (maskPixelColor.Equals(Color.FromArgb(255, 255, 255, 255)))
-                            {
-                                float colorStrength = baseImageBitmap.GetPixel(x, y).R / 255.0f;
-
-                                ((Bitmap)PreviewPicture.Image).SetPixel(x, y,
-                                    Color.FromArgb(255, (int)(AccentColorPreview.BackColor.R * colorStrength),
-                                        (int)(AccentColorPreview.BackColor.G * colorStrength),
-                                        (int)(AccentColorPreview.BackColor.B * colorStrength)));
-                            }
-                        }
-                    }
-                }
-                
-                if (colorMask3 != null)
-                {
-                    var colorMaskBitmap = (Bitmap)colorMask3;
-
-                    for (int x = 0; x < colorMask3.Width; x++)
-                    {
-                        for (int y = 0; y < colorMask3.Height; y++)
-                        {
-                            var maskPixelColor = colorMaskBitmap.GetPixel(x, y);
-                            if (maskPixelColor.Equals(Color.FromArgb(255, 255, 255, 255)))
-                            {
-                                ((Bitmap)PreviewPicture.Image).SetPixel(x, y,
-                                    Color.FromArgb(255, (MainColorPreview.BackColor.R), 
-                                        (MainColorPreview.BackColor.G), (MainColorPreview.BackColor.B)));
-                            }
-                        }
-                    }
-                }
-
-                PreviewPicture.Refresh();
-            }
+            ApplyColorWithMask(true, PreviewPicture2, baseImage2, colorMask2, AccentColorPreview.BackColor);
             
-            if (PreviewPicture2.Image != null && colorMask2 != null)
+            ApplyColorWithMask(false, PreviewPicture3, baseImage3, colorMask4, MainColorPreview.BackColor);
+            ApplyColorWithMask(true, PreviewPicture3, baseImage3, colorMask5, AccentColorPreview.BackColor);
+            
+            ApplyColorWithMask(true, PreviewPicture4, baseImage4, null, AccentColorPreview.BackColor);
+            
+            PreviewPicture.Refresh();
+            PreviewPicture2.Refresh();
+            PreviewPicture3.Refresh();
+            PreviewPicture4.Refresh();
+            MainColorPreview.Refresh();
+            AccentColorPreview.Refresh();
+        }
+
+        private void ApplyColorWithMask(bool tint, PictureBox previewPicture, Image baseImage, Image mask, Color color)
+        {
+            if (previewPicture.Image != null)
             {
-                var baseImageBitmap = (Bitmap)baseImage2;
-                var colorMaskBitmap = (Bitmap)colorMask2;
+                var baseImageBitmap = (Bitmap)baseImage;
+
+                var imgX = baseImage.Width;
+                var imgY = baseImage.Height;
                 
-                for (int x = 0; x < colorMask2.Width; x++)
+                for (int x = 0; x < imgX; x++)
                 {
-                    for (int y = 0; y < colorMask2.Height; y++)
+                    for (int y = 0; y < imgY; y++)
                     {
-                        var maskPixelColor = colorMaskBitmap.GetPixel(x, y);
-                        if (maskPixelColor.Equals(Color.FromArgb(255,255,255,255)))
+                        var shouldColor = true;
+                        if (mask != null)
                         {
-                            float colorStrength = baseImageBitmap.GetPixel(x, y).R / 255.0f;
-                            
-                            ((Bitmap)PreviewPicture2.Image).SetPixel(x, y, 
-                                Color.FromArgb(255, (int)(AccentColorPreview.BackColor.R * colorStrength),
-                                    (int)(AccentColorPreview.BackColor.G * colorStrength),
-                                    (int)(AccentColorPreview.BackColor.B * colorStrength)));
+                            var colorMaskBitmap = (Bitmap)mask;
+                            var maskPixelColor = colorMaskBitmap.GetPixel(x, y);
+                            shouldColor = maskPixelColor.Equals(Color.FromArgb(255, 255, 255, 255));
+                        }
+                       
+                        if (shouldColor)
+                        {
+                            float colorStrength = 1;
+
+                            if (tint)
+                            {
+                                colorStrength = baseImageBitmap.GetPixel(x, y).R / 255.0f;
+                            }
+
+                            ((Bitmap)previewPicture.Image).SetPixel(x, y,
+                                Color.FromArgb(255, 
+                                    (int)(color.R * colorStrength),
+                                    (int)(color.G * colorStrength),
+                                    (int)(color.B * colorStrength)));
                         }
                     }
                 }
-                
-                PreviewPicture.Refresh();
-                PreviewPicture2.Refresh();
             }
         }
 
@@ -637,6 +628,8 @@ namespace ShadowColorAdjuster
             {
                 ((Bitmap)PreviewPicture.Image).Save(fbd.SelectedPath + @"\" + Image1Name, ImageFormat.Png);
                 ((Bitmap)PreviewPicture2.Image).Save(fbd.SelectedPath + @"\" + Image2Name, ImageFormat.Png);
+                ((Bitmap)PreviewPicture3.Image).Save(fbd.SelectedPath + @"\" + Image3Name, ImageFormat.Png);
+                ((Bitmap)PreviewPicture4.Image).Save(fbd.SelectedPath + @"\" + Image4Name, ImageFormat.Png);
             }
         }
     }

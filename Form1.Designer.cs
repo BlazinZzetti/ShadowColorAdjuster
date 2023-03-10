@@ -72,6 +72,8 @@
             this.MainRedNumericUpDown = new System.Windows.Forms.NumericUpDown();
             this.MainColorPreview = new System.Windows.Forms.PictureBox();
             this.MainRedTrackBar = new System.Windows.Forms.TrackBar();
+            this.PreviewPicture3 = new System.Windows.Forms.PictureBox();
+            this.PreviewPicture4 = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.AccentRedTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.AccentColorPreview)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.AccentRedNumericUpDown)).BeginInit();
@@ -100,6 +102,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.MainRedNumericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.MainColorPreview)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.MainRedTrackBar)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.PreviewPicture3)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.PreviewPicture4)).BeginInit();
             this.SuspendLayout();
             // 
             // AccentRedTrackBar
@@ -488,11 +492,31 @@
             this.MainRedTrackBar.TickFrequency = 10;
             this.MainRedTrackBar.Scroll += new System.EventHandler(this.MainRedTrackBar_Scroll);
             // 
+            // PreviewPicture3
+            // 
+            this.PreviewPicture3.Location = new System.Drawing.Point(12, 273);
+            this.PreviewPicture3.Name = "PreviewPicture3";
+            this.PreviewPicture3.Size = new System.Drawing.Size(100, 100);
+            this.PreviewPicture3.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.PreviewPicture3.TabIndex = 46;
+            this.PreviewPicture3.TabStop = false;
+            // 
+            // PreviewPicture4
+            // 
+            this.PreviewPicture4.Location = new System.Drawing.Point(118, 273);
+            this.PreviewPicture4.Name = "PreviewPicture4";
+            this.PreviewPicture4.Size = new System.Drawing.Size(100, 100);
+            this.PreviewPicture4.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.PreviewPicture4.TabIndex = 47;
+            this.PreviewPicture4.TabStop = false;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(976, 288);
+            this.ClientSize = new System.Drawing.Size(976, 384);
+            this.Controls.Add(this.PreviewPicture4);
+            this.Controls.Add(this.PreviewPicture3);
             this.Controls.Add(this.label8);
             this.Controls.Add(this.label9);
             this.Controls.Add(this.MainLightNumericUpDown);
@@ -566,9 +590,14 @@
             ((System.ComponentModel.ISupportInitialize)(this.MainRedNumericUpDown)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.MainColorPreview)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.MainRedTrackBar)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.PreviewPicture3)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.PreviewPicture4)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
         }
+
+        private System.Windows.Forms.PictureBox PreviewPicture3;
+        private System.Windows.Forms.PictureBox PreviewPicture4;
 
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Label label8;

@@ -86,6 +86,12 @@
       <Content Include="ReferenceImages\ShadowColorBase2.png">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </Content>
+      <Content Include="ReferenceImages\ShadowColorBase3.png">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <Content Include="ReferenceImages\ShadowColorBase4.png">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
       <Content Include="ReferenceImages\ShadowColorMask1.png">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </Content>
@@ -93,6 +99,12 @@
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </Content>
       <Content Include="ReferenceImages\ShadowColorMask3.png">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <Content Include="ReferenceImages\ShadowColorMask4.png">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <Content Include="ReferenceImages\ShadowColorMask5.png">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </Content>
     </ItemGroup>
