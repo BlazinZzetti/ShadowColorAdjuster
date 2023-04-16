@@ -8,23 +8,26 @@ namespace ShadowColorAdjuster
 {
     public partial class Form1 : Form
     {
-        private bool controlUpdateInProgress = false;
-        
         private Image baseImage1;
         private Image baseImage2;
         private Image baseImage3;
         private Image baseImage4;
+        private Image baseImage5;
         
         private Image colorMask1;
         private Image colorMask2;
         private Image colorMask3;
         private Image colorMask4;
         private Image colorMask5;
+        private Image colorMask6;
 
-        private const string Image1Name = "tex1_128x128_95091b97a182cc89_16cffb4f349bb9eb_8.png";
-        private const string Image2Name = "tex1_128x128_23470849ed473c96_9bcd3e8f93232964_8.png";
-        private const string Image3Name = "tex1_128x128_0a670a23d69f0145_d1f065a85855fcc6_8.png";
-        private const string Image4Name = "tex1_64x64_ad55d92089adb44b_a7fa923a179a8dd1_8.png";
+        private const string Image1Name = "tex1_128x128_6f6dc295fc576674_6.png";//Playable Shadow Main
+        private const string Image2Name = "tex1_128x128_23470849ed473c96_9bcd3e8f93232964_8.png";//Playable Shadow Eye
+        private const string Image3Name = "tex1_128x128_0a670a23d69f0145_d1f065a85855fcc6_8.png";//Event Shadow Main
+        private const string Image4Name = "tex1_64x64_ad55d92089adb44b_a7fa923a179a8dd1_8.png";//Event Shadow Accent
+        private const string Image5Name = "tex1_128x128_ec9f785c3a033e72_ea84be987812412f_8.png";//Playable Super Shadow Main
+        private const string Image6Name = "tex1_128x128_d690c7dc04b985c8_879d6817d5e22595_9.png";//Event Super Shadow Main
+        
         
         public Form1()
         {
@@ -39,221 +42,106 @@ namespace ShadowColorAdjuster
             baseImage2 = Image.FromFile(AppDomain.CurrentDomain.BaseDirectory + @"ReferenceImages\ShadowColorBase2.png");
             baseImage3 = Image.FromFile(AppDomain.CurrentDomain.BaseDirectory + @"ReferenceImages\ShadowColorBase3.png");
             baseImage4 = Image.FromFile(AppDomain.CurrentDomain.BaseDirectory + @"ReferenceImages\ShadowColorBase4.png");
+            baseImage5 = Image.FromFile(AppDomain.CurrentDomain.BaseDirectory + @"ReferenceImages\ShadowColorBase5.png");
             colorMask1 = Image.FromFile(AppDomain.CurrentDomain.BaseDirectory + @"ReferenceImages\ShadowColorMask1.png");
             colorMask2 = Image.FromFile(AppDomain.CurrentDomain.BaseDirectory + @"ReferenceImages\ShadowColorMask2.png");
             colorMask3 = Image.FromFile(AppDomain.CurrentDomain.BaseDirectory + @"ReferenceImages\ShadowColorMask3.png");
             colorMask4 = Image.FromFile(AppDomain.CurrentDomain.BaseDirectory + @"ReferenceImages\ShadowColorMask4.png");
             colorMask5 = Image.FromFile(AppDomain.CurrentDomain.BaseDirectory + @"ReferenceImages\ShadowColorMask5.png");
+            colorMask6 = Image.FromFile(AppDomain.CurrentDomain.BaseDirectory + @"ReferenceImages\ShadowColorMask6.png");
             
             PreviewPicture.Image = new Bitmap(baseImage1);
             PreviewPicture2.Image = new Bitmap(baseImage2);
             PreviewPicture3.Image = new Bitmap(baseImage3);
             PreviewPicture4.Image = new Bitmap(baseImage4);
+            PreviewPicture5.Image = new Bitmap(baseImage1);
+            PreviewPicture6.Image = new Bitmap(baseImage5);
         }
 
         private void InitColorControls()
         {
-            controlUpdateInProgress = true;
-
-            MainRedNumericUpDown.Value = MainColorPreview.BackColor.R;
-            MainGreenNumericUpDown.Value = MainColorPreview.BackColor.G;
-            MainBlueNumericUpDown.Value = MainColorPreview.BackColor.B;
-
-            MainRedTrackBar.Value = MainColorPreview.BackColor.R;
-            MainGreenTrackBar.Value = MainColorPreview.BackColor.G;
-            MainBlueTrackBar.Value = MainColorPreview.BackColor.B;
-
-            var mainHsl = RGBToHSL(MainColorPreview.BackColor);
-        
-            MainHueTrackBar.Value = (int)mainHsl[0];
-            MainHueNumericUpDown.Value = (decimal)mainHsl[0];
-            MainSatTrackBar.Value = (int)mainHsl[1];
-            MainSatNumericUpDown.Value = (decimal)mainHsl[1];
-            MainLightTrackBar.Value = (int)mainHsl[2];
-            MainLightNumericUpDown.Value = (decimal)mainHsl[2];
-            
-            AccentRedNumericUpDown.Value = AccentColorPreview.BackColor.R;
-            AccentGreenNumericUpDown.Value = AccentColorPreview.BackColor.G;
-            AccentBlueNumericUpDown.Value = AccentColorPreview.BackColor.B;
-
-            AccentRedTrackBar.Value = AccentColorPreview.BackColor.R;
-            AccentGreenTrackBar.Value = AccentColorPreview.BackColor.G;
-            AccentBlueTrackBar.Value = AccentColorPreview.BackColor.B;
-
-            var hsl = RGBToHSL(AccentColorPreview.BackColor);
-        
-            AccentHueTrackBar.Value = (int)hsl[0];
-            AccentHueNumericUpDown.Value = (decimal)hsl[0];
-            AccentSatTrackBar.Value = (int)hsl[1];
-            AccentSatNumericUpDown.Value = (decimal)hsl[1];
-            AccentLightTrackBar.Value = (int)hsl[2];
-            AccentLightNumericUpDown.Value = (decimal)hsl[2];
-
-            controlUpdateInProgress = false;
-
-            ApplyColorToPreviews();
-        }
-        
-        private void UpdateColorControls(bool withRGB, bool withScroll)
-        {
-            controlUpdateInProgress = true;
-            
-            if (withRGB)
-            {
-                if (withScroll)
-                {
-                    MainRedNumericUpDown.Value = MainColorPreview.BackColor.R;
-                    MainGreenNumericUpDown.Value = MainColorPreview.BackColor.G;
-                    MainBlueNumericUpDown.Value = MainColorPreview.BackColor.B;
-                }
-                else
-                {
-                    MainRedTrackBar.Value = MainColorPreview.BackColor.R;
-                    MainGreenTrackBar.Value = MainColorPreview.BackColor.G;
-                    MainBlueTrackBar.Value = MainColorPreview.BackColor.B;
-                }
-
-                var mainHsl = RGBToHSL(MainColorPreview.BackColor);
-            
-                MainHueTrackBar.Value = (int)mainHsl[0];
-                MainHueNumericUpDown.Value = (decimal)mainHsl[0];
-                MainSatTrackBar.Value = (int)mainHsl[1];
-                MainSatNumericUpDown.Value = (decimal)mainHsl[1];
-                MainLightTrackBar.Value = (int)mainHsl[2];
-                MainLightNumericUpDown.Value = (decimal)mainHsl[2];
-                
-                if (withScroll)
-                {
-                    AccentRedNumericUpDown.Value = AccentColorPreview.BackColor.R;
-                    AccentGreenNumericUpDown.Value = AccentColorPreview.BackColor.G;
-                    AccentBlueNumericUpDown.Value = AccentColorPreview.BackColor.B;
-                }
-                else
-                {
-                    AccentRedTrackBar.Value = AccentColorPreview.BackColor.R;
-                    AccentGreenTrackBar.Value = AccentColorPreview.BackColor.G;
-                    AccentBlueTrackBar.Value = AccentColorPreview.BackColor.B;
-                }
-
-                var hsl = RGBToHSL(AccentColorPreview.BackColor);
-            
-                AccentHueTrackBar.Value = (int)hsl[0];
-                AccentHueNumericUpDown.Value = (decimal)hsl[0];
-                AccentSatTrackBar.Value = (int)hsl[1];
-                AccentSatNumericUpDown.Value = (decimal)hsl[1];
-                AccentLightTrackBar.Value = (int)hsl[2];
-                AccentLightNumericUpDown.Value = (decimal)hsl[2];
-            }
-            else
-            {
-                if (withScroll)
-                {
-                    MainHueNumericUpDown.Value = MainHueTrackBar.Value;
-                    MainSatNumericUpDown.Value = MainSatTrackBar.Value;
-                    MainLightNumericUpDown.Value = MainLightTrackBar.Value;
-                }
-                else
-                {
-                    MainHueTrackBar.Value = (int)MainHueNumericUpDown.Value;
-                    MainSatTrackBar.Value = (int)MainSatNumericUpDown.Value;
-                    MainLightTrackBar.Value = (int)MainLightNumericUpDown.Value;
-                }
-                
-                MainRedTrackBar.Value = MainColorPreview.BackColor.R;
-                MainRedNumericUpDown.Value = MainColorPreview.BackColor.R;
-                MainGreenTrackBar.Value = MainColorPreview.BackColor.G;
-                MainGreenNumericUpDown.Value = MainColorPreview.BackColor.G;
-                MainBlueTrackBar.Value = MainColorPreview.BackColor.B;
-                MainBlueNumericUpDown.Value = MainColorPreview.BackColor.B;
-                
-                if (withScroll)
-                {
-                    AccentHueNumericUpDown.Value = AccentHueTrackBar.Value;
-                    AccentSatNumericUpDown.Value = AccentSatTrackBar.Value;
-                    AccentLightNumericUpDown.Value = AccentLightTrackBar.Value;
-                }
-                else
-                {
-                    AccentHueTrackBar.Value = (int)AccentHueNumericUpDown.Value;
-                    AccentSatTrackBar.Value = (int)AccentSatNumericUpDown.Value;
-                    AccentLightTrackBar.Value = (int)AccentLightNumericUpDown.Value;
-                }
-                
-                AccentRedTrackBar.Value = AccentColorPreview.BackColor.R;
-                AccentRedNumericUpDown.Value = AccentColorPreview.BackColor.R;
-                AccentGreenTrackBar.Value = AccentColorPreview.BackColor.G;
-                AccentGreenNumericUpDown.Value = AccentColorPreview.BackColor.G;
-                AccentBlueTrackBar.Value = AccentColorPreview.BackColor.B;
-                AccentBlueNumericUpDown.Value = AccentColorPreview.BackColor.B;
-            }
-
-            controlUpdateInProgress = false;
-
             ApplyColorToPreviews();
         }
 
         private void ApplyColorToPreviews()
         {
-            ApplyColorWithMask(true, PreviewPicture, baseImage1, colorMask1, AccentColorPreview.BackColor);
-            ApplyColorWithMask(false, PreviewPicture, baseImage1, colorMask3, MainColorPreview.BackColor);
+            Image newImage = ApplyColorWithMask(true,  baseImage1, colorMask1, AccentColorPreview.BackColor);
+            newImage = ApplyColorWithMask(false,  newImage, colorMask3, MainColorPreview.BackColor);
 
-            ApplyColorWithMask(true, PreviewPicture2, baseImage2, colorMask2, AccentColorPreview.BackColor);
+            Image newImage2 = ApplyColorWithMask(true,  baseImage2, colorMask2, AccentColorPreview.BackColor);
             
-            ApplyColorWithMask(false, PreviewPicture3, baseImage3, colorMask4, MainColorPreview.BackColor);
-            ApplyColorWithMask(true, PreviewPicture3, baseImage3, colorMask5, AccentColorPreview.BackColor);
+            Image newImage3 = ApplyColorWithMask(false,  baseImage3, colorMask4, MainColorPreview.BackColor);
+            newImage3 = ApplyColorWithMask(true,  newImage3, colorMask5, AccentColorPreview.BackColor);
             
-            ApplyColorWithMask(true, PreviewPicture4, baseImage4, null, AccentColorPreview.BackColor);
+            Image newImage4 = ApplyColorWithMask(true,  baseImage4, null, AccentColorPreview.BackColor);
+            
+            Image newImage5 = ApplyColorWithMask(true,  baseImage1, colorMask1, AccentColorPreview.BackColor);
+            newImage5 = ApplyColorWithMask(false,  newImage5, colorMask3, Color.Black);
+            
+            Image newImage6 = ApplyColorWithMask(true,  baseImage5, colorMask6, AccentColorPreview.BackColor);
+
+            PreviewPicture.Image = newImage;
+            PreviewPicture2.Image = newImage2;
+            PreviewPicture3.Image = newImage3;
+            PreviewPicture4.Image = newImage4;
+            PreviewPicture5.Image = newImage5;
+            PreviewPicture6.Image = newImage6;
             
             PreviewPicture.Refresh();
             PreviewPicture2.Refresh();
             PreviewPicture3.Refresh();
             PreviewPicture4.Refresh();
+            PreviewPicture5.Refresh();
+            PreviewPicture6.Refresh();
+            
             MainColorPreview.Refresh();
             AccentColorPreview.Refresh();
         }
 
-        private void ApplyColorWithMask(bool tint, PictureBox previewPicture, Image baseImage, Image mask, Color color)
+        private Image ApplyColorWithMask(bool tint, Image baseImage, Image mask, Color color)
         {
-            if (previewPicture.Image != null)
+            Bitmap baseImageBitmap = new Bitmap(baseImage);
+
+            Bitmap colorMaskBitmap = null;
+            
+            if (mask != null)
             {
-                var baseImageBitmap = (Bitmap)baseImage;
+                colorMaskBitmap = (Bitmap)mask;
+            }
 
-                var imgX = baseImage.Width;
-                var imgY = baseImage.Height;
-                
-                for (int x = 0; x < imgX; x++)
+            var imgX = baseImage.Width;
+            var imgY = baseImage.Height;
+            
+            for (int x = 0; x < imgX; x++)
+            {
+                for (int y = 0; y < imgY; y++)
                 {
-                    for (int y = 0; y < imgY; y++)
+                    var shouldColor = true;
+                    if (colorMaskBitmap != null)
                     {
-                        var shouldColor = true;
-                        if (mask != null)
+                        var maskPixelColor = colorMaskBitmap.GetPixel(x, y);
+                        shouldColor = maskPixelColor.Equals(Color.FromArgb(255,255,255,255));
+                    }
+                   
+                    if (shouldColor)
+                    {
+                        float colorStrength = 1;
+                    
+                        if (tint)
                         {
-                            var colorMaskBitmap = (Bitmap)mask;
-                            var maskPixelColor = colorMaskBitmap.GetPixel(x, y);
-                            shouldColor = maskPixelColor.Equals(Color.FromArgb(255, 255, 255, 255));
+                            colorStrength = ((Bitmap)baseImage).GetPixel(x, y).R / 255.0f;
                         }
-                       
-                        if (shouldColor)
-                        {
-                            float colorStrength = 1;
-
-                            if (tint)
-                            {
-                                colorStrength = baseImageBitmap.GetPixel(x, y).R / 255.0f;
-                            }
-
-                            ((Bitmap)previewPicture.Image).SetPixel(x, y,
-                                Color.FromArgb(255, 
-                                    (int)(color.R * colorStrength),
-                                    (int)(color.G * colorStrength),
-                                    (int)(color.B * colorStrength)));
-                        }
+                    
+                        baseImageBitmap.SetPixel(x, y, Color.FromArgb(255, 
+                                (int)(color.R * colorStrength),
+                                (int)(color.G * colorStrength),
+                                (int)(color.B * colorStrength)));
                     }
                 }
             }
-        }
 
-        #region ControlValueChanged Methods
+            return baseImageBitmap;
+        }
 
         private void UpdatePreviewColor(PictureBox colorPreview, float[] floatRGB)
         {
@@ -264,228 +152,6 @@ namespace ShadowColorAdjuster
         {
             colorPreview.BackColor = Color.FromArgb(255, red, green, blue);
         }
-        
-        #region Accent Color
-
-        private void RedNumericUpDown_ValueChanged(object sender, EventArgs e)
-        {
-            if (!controlUpdateInProgress)
-            {
-                UpdatePreviewColor(AccentColorPreview, (int)AccentRedNumericUpDown.Value, AccentColorPreview.BackColor.G, AccentColorPreview.BackColor.B);
-                UpdateColorControls(true, false);
-            }
-        }
-
-        private void RedTrackBar_Scroll(object sender, EventArgs e)
-        {
-            if (!controlUpdateInProgress)
-            {
-                UpdatePreviewColor(AccentColorPreview, AccentRedTrackBar.Value, AccentColorPreview.BackColor.G, AccentColorPreview.BackColor.B);
-                UpdateColorControls(true, true);
-            }
-        }
-        
-        private void GreenNumericUpDown_ValueChanged(object sender, EventArgs e)
-        {
-            if (!controlUpdateInProgress)
-            {
-                UpdatePreviewColor(AccentColorPreview, AccentColorPreview.BackColor.R, (int)AccentGreenNumericUpDown.Value, AccentColorPreview.BackColor.B);
-                UpdateColorControls(true, false);
-            }
-        }
-
-        private void GreenTrackBar_Scroll(object sender, EventArgs e)
-        {
-            if (!controlUpdateInProgress)
-            {
-                UpdatePreviewColor(AccentColorPreview, AccentColorPreview.BackColor.R, AccentGreenTrackBar.Value, AccentColorPreview.BackColor.B);
-                UpdateColorControls(true, true);
-            }
-        }
-        
-        private void BlueNumericUpDown_ValueChanged(object sender, EventArgs e)
-        {
-            if (!controlUpdateInProgress)
-            {
-                UpdatePreviewColor(AccentColorPreview, AccentColorPreview.BackColor.R, AccentColorPreview.BackColor.G, (int)AccentBlueNumericUpDown.Value);
-                UpdateColorControls(true, false);
-            }
-        }
-
-        private void BlueTrackBar_Scroll(object sender, EventArgs e)
-        {
-            if (!controlUpdateInProgress)
-            {
-                UpdatePreviewColor(AccentColorPreview, AccentColorPreview.BackColor.R, AccentColorPreview.BackColor.G, AccentBlueTrackBar.Value);
-                UpdateColorControls(true, true);
-            }
-        }
-        
-        private void HueNumericUpDown_ValueChanged(object sender, EventArgs e)
-        {
-            if (!controlUpdateInProgress)
-            {
-                UpdatePreviewColor(AccentColorPreview, HSLToRGB((int)AccentHueNumericUpDown.Value, (int)AccentSatNumericUpDown.Value, (int)AccentLightNumericUpDown.Value));
-                UpdateColorControls(false, false);
-            }
-        }
-
-        private void HueTrackBar_Scroll(object sender, EventArgs e)
-        {
-            if (!controlUpdateInProgress)
-            {
-                UpdatePreviewColor(AccentColorPreview, HSLToRGB((int)AccentHueNumericUpDown.Value, (int)AccentSatNumericUpDown.Value, (int)AccentLightNumericUpDown.Value));
-                UpdateColorControls(false, true);
-            }
-        }
-
-        private void SatNumericUpDown_ValueChanged(object sender, EventArgs e)
-        {
-            if (!controlUpdateInProgress)
-            {
-                UpdatePreviewColor(AccentColorPreview, HSLToRGB((int)AccentHueNumericUpDown.Value, (int)AccentSatNumericUpDown.Value, (int)AccentLightNumericUpDown.Value));
-                UpdateColorControls(false, false);
-            }
-        }
-        
-        private void SatTrackBar_Scroll(object sender, EventArgs e)
-        {
-            if (!controlUpdateInProgress)
-            {
-                UpdatePreviewColor(AccentColorPreview, HSLToRGB((int)AccentHueNumericUpDown.Value, (int)AccentSatNumericUpDown.Value, (int)AccentLightNumericUpDown.Value));
-                UpdateColorControls(false, true);
-            }
-        }
-
-        private void LightNumericUpDown_ValueChanged(object sender, EventArgs e)
-        {
-            if (!controlUpdateInProgress)
-            {
-                UpdatePreviewColor(AccentColorPreview, HSLToRGB((int)AccentHueNumericUpDown.Value, (int)AccentSatNumericUpDown.Value, (int)AccentLightNumericUpDown.Value));
-                UpdateColorControls(false, false);
-            }
-        }
-        
-        private void LightTrackBar_Scroll(object sender, EventArgs e)
-        {
-            if (!controlUpdateInProgress)
-            {
-                UpdatePreviewColor(AccentColorPreview, HSLToRGB((int)AccentHueNumericUpDown.Value, (int)AccentSatNumericUpDown.Value, (int)AccentLightNumericUpDown.Value));
-                UpdateColorControls(false, true);
-            }
-        }
-
-        #endregion
-        
-        private void MainRedNumericUpDown_ValueChanged(object sender, EventArgs e)
-        {
-            if (!controlUpdateInProgress)
-            {
-                UpdatePreviewColor(MainColorPreview, (int)MainRedNumericUpDown.Value, MainColorPreview.BackColor.G, MainColorPreview.BackColor.B);
-                UpdateColorControls(true, false);
-            }
-        }
-
-        private void MainRedTrackBar_Scroll(object sender, EventArgs e)
-        {
-            if (!controlUpdateInProgress)
-            {
-                UpdatePreviewColor(MainColorPreview, MainRedTrackBar.Value, MainColorPreview.BackColor.G, MainColorPreview.BackColor.B);
-                UpdateColorControls(true, true);
-            }
-        }
-        
-        private void MainGreenNumericUpDown_ValueChanged(object sender, EventArgs e)
-        {
-            if (!controlUpdateInProgress)
-            {
-                UpdatePreviewColor(MainColorPreview, MainColorPreview.BackColor.R, (int)MainGreenNumericUpDown.Value, MainColorPreview.BackColor.B);
-                UpdateColorControls(true, false);
-            }
-        }
-
-        private void MainGreenTrackBar_Scroll(object sender, EventArgs e)
-        {
-            if (!controlUpdateInProgress)
-            {
-                UpdatePreviewColor(MainColorPreview, MainColorPreview.BackColor.R, MainGreenTrackBar.Value, MainColorPreview.BackColor.B);
-                UpdateColorControls(true, true);
-            }
-        }
-        
-        private void MainBlueNumericUpDown_ValueChanged(object sender, EventArgs e)
-        {
-            if (!controlUpdateInProgress)
-            {
-                UpdatePreviewColor(MainColorPreview, MainColorPreview.BackColor.R, MainColorPreview.BackColor.G, (int)MainBlueNumericUpDown.Value);
-                UpdateColorControls(true, false);
-            }
-        }
-
-        private void MainBlueTrackBar_Scroll(object sender, EventArgs e)
-        {
-            if (!controlUpdateInProgress)
-            {
-                UpdatePreviewColor(MainColorPreview, MainColorPreview.BackColor.R, MainColorPreview.BackColor.G, MainBlueTrackBar.Value);
-                UpdateColorControls(true, true);
-            }
-        }
-
-        private void MainHueNumericUpDown_ValueChanged(object sender, EventArgs e)
-        {
-            if (!controlUpdateInProgress)
-            {
-                UpdatePreviewColor(MainColorPreview, HSLToRGB((int)MainHueNumericUpDown.Value, (int)MainSatNumericUpDown.Value, (int)MainLightNumericUpDown.Value));
-                UpdateColorControls(false, false);
-            }
-        }
-
-        private void MainHueTrackBar_Scroll(object sender, EventArgs e)
-        {
-            if (!controlUpdateInProgress)
-            {
-                UpdatePreviewColor(MainColorPreview, HSLToRGB((int)MainHueNumericUpDown.Value, (int)MainSatNumericUpDown.Value, (int)MainLightNumericUpDown.Value));
-                UpdateColorControls(false, true);
-            }
-        }
-
-        private void MainSatNumericUpDown_ValueChanged(object sender, EventArgs e)
-        {
-            if (!controlUpdateInProgress)
-            {
-                UpdatePreviewColor(MainColorPreview, HSLToRGB((int)MainHueNumericUpDown.Value, (int)MainSatNumericUpDown.Value, (int)MainLightNumericUpDown.Value));
-                UpdateColorControls(false, false);
-            }
-        }
-        
-        private void MainSatTrackBar_Scroll(object sender, EventArgs e)
-        {
-            if (!controlUpdateInProgress)
-            {
-                UpdatePreviewColor(MainColorPreview, HSLToRGB((int)MainHueNumericUpDown.Value, (int)MainSatNumericUpDown.Value, (int)MainLightNumericUpDown.Value));
-                UpdateColorControls(false, true);
-            }
-        }
-
-        private void MainLightNumericUpDown_ValueChanged(object sender, EventArgs e)
-        {
-            if (!controlUpdateInProgress)
-            {
-                UpdatePreviewColor(MainColorPreview, HSLToRGB((int)MainHueNumericUpDown.Value, (int)MainSatNumericUpDown.Value, (int)MainLightNumericUpDown.Value));
-                UpdateColorControls(false, false);
-            }
-        }
-        
-        private void MainLightTrackBar_Scroll(object sender, EventArgs e)
-        {
-            if (!controlUpdateInProgress)
-            {
-                UpdatePreviewColor(MainColorPreview, HSLToRGB((int)MainHueNumericUpDown.Value, (int)MainSatNumericUpDown.Value, (int)MainLightNumericUpDown.Value));
-                UpdateColorControls(false, true);
-            }
-        }
-        
-        #endregion
 
         #region Color Manipulation Methods
 
@@ -547,7 +213,7 @@ namespace ShadowColorAdjuster
             if (L > 100)
                 L = 100;
 
-            return new float[3] {H, S, L};
+            return new float[] {H, S, L};
         }
         
         public static float[] HSLToRGB(float H, float s, float l)
@@ -630,7 +296,21 @@ namespace ShadowColorAdjuster
                 ((Bitmap)PreviewPicture2.Image).Save(fbd.SelectedPath + @"\" + Image2Name, ImageFormat.Png);
                 ((Bitmap)PreviewPicture3.Image).Save(fbd.SelectedPath + @"\" + Image3Name, ImageFormat.Png);
                 ((Bitmap)PreviewPicture4.Image).Save(fbd.SelectedPath + @"\" + Image4Name, ImageFormat.Png);
+                ((Bitmap)PreviewPicture5.Image).Save(fbd.SelectedPath + @"\" + Image5Name, ImageFormat.Png);
+                ((Bitmap)PreviewPicture6.Image).Save(fbd.SelectedPath + @"\" + Image6Name, ImageFormat.Png);
             }
+        }
+
+        private void MainColorEditor_ColorChanged(object sender, EventArgs e)
+        {
+            UpdatePreviewColor(MainColorPreview, MainColorEditor.Color.R, MainColorEditor.Color.G, MainColorEditor.Color.B);
+            ApplyColorToPreviews();
+        }
+
+        private void AccentColorEditor_ColorChanged(object sender, EventArgs e)
+        {
+            UpdatePreviewColor(AccentColorPreview, AccentColorEditor.Color.R, AccentColorEditor.Color.G, AccentColorEditor.Color.B);
+            ApplyColorToPreviews();
         }
     }
 }
